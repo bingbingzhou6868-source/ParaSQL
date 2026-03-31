@@ -1,0 +1,37 @@
+# ParaSQL 反思 RL 训练配置（GRPO）
+
+# 模型
+model_name_or_path: "./output/parasql-sft"
+output_dir: "./output/parasql-rl"
+use_lora: true
+lora_r: 16
+lora_alpha: 32
+
+# 数据（使用 Stage 1 推理结果中的错误样本）
+stage1_results_path: "eval_results/bird_dev_results.json"
+processed_data_path: "data/processed/bird/train.json"
+db_base_dir: "data/raw/bird/train/train_databases"
+dataset: "bird"
+
+# GRPO 超参
+num_generations: 8       # 每个 prompt 采样 G=8 个输出
+temperature: 0.8         # 采样温度
+max_new_tokens: 512      # 反思输出最大长度
+learning_rate: 5.0e-6
+num_train_epochs: 2
+per_device_batch: 1
+grad_accum: 8
+kl_coef: 0.04            # KL 散度惩罚系数 β
+clip_ratio: 0.2          # PPO clip ε
+
+# 奖励权重
+w_exec:   1.0   # 执行正确性 F1（Ground Truth，最重要）
+w_format: 0.1   # 格式规范（<reasoning> + <answer>）
+w_syntax: 0.1   # 语法正确（SQL parser）
+w_schema: 0.2   # Schema 匹配（Jaccard）
+w_ngram:  0.1   # N-gram 相似度（bigram）
+
+# 其他
+save_steps: 100
+logging_steps: 10
+bf16: true
