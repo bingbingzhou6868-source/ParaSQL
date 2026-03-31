@@ -1,0 +1,36 @@
+# ParaSQL SFT 训练配置
+# 使用方式：python train/sft_trainer.py train/train_config.yaml
+
+# 模型
+model_name_or_path: "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"
+use_lora: true
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.05
+lora_target_modules: "q_proj,v_proj,k_proj,o_proj"
+
+# 数据
+train_file: "data/sft/train.jsonl"
+dev_file: "data/sft/dev.jsonl"
+max_length: 4096
+
+# 训练
+output_dir: "./output/parasql-1.5b"
+num_train_epochs: 3
+per_device_train_batch_size: 1
+per_device_eval_batch_size: 1
+gradient_accumulation_steps: 8
+learning_rate: 1.0e-4
+lr_scheduler_type: "cosine"
+warmup_ratio: 0.05
+weight_decay: 0.01
+max_grad_norm: 1.0
+bf16: true
+logging_steps: 10
+eval_steps: 200
+save_steps: 200
+save_total_limit: 3
+evaluation_strategy: "steps"
+load_best_model_at_end: true
+report_to: "none"
+dataloader_num_workers: 4
